@@ -6,6 +6,7 @@ from .image_ops import utils
 from flask import Flask
 from flask_cors import CORS, cross_origin
 from markupsafe import escape
+from flask import jsonify
 
 
 app = Flask(__name__)
@@ -21,7 +22,7 @@ def hello_world():
 @app.route('/all')
 def all():
     db = firestore.MuseumDB()
-    return json.dumps(db.fetch_data())
+    return jsonify(db.fetch_data())
 
 
 @app.route('/start/<museum>/<collection>')
