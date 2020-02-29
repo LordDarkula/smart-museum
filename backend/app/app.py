@@ -1,6 +1,8 @@
 import os
+import shutil
 import json
 from . import firestore
+from .image_ops import utils
 from flask import Flask
 from markupsafe import escape
 
@@ -18,8 +20,14 @@ def all():
 
 @app.route('/start/<museum>/<collection>')
 def start(museum, collection):
-    if os.path.exists():
-        shutil.rmtree(images)
+    if os.path.exists('images'):
+        shutil.rmtree('images')
     os.makedirs('images')
-    images = firestore.fetch_images(
+    db = firestore.MuseumDB()
+    images = db.fetch_images(museum, collection)
+    for key, val in images.items():
+        utils.download_image_with_url(val, os.path.join('images', key))
+
+    with open('image_data.json', 'w') as fp:
+            json.dump(images, fp)
     return "Museum {}, collection {}".format(escape(museum), escape(collection))

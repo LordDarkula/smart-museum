@@ -11,11 +11,23 @@ class MuseumDB:
         return {'test_data': [doc.get().to_dict() for doc in data_ref.list_documents()]}
 
     def fetch_images(self, museum, collection):
-        museum_ref = self.db.collection(u'test_data').where(u'name', u'==', museum)
+        print("Museum is " + museum)
+        print("Collection is " + collection)
+        museum_ref = self.db.collection(u'mark_data').where(u'name', u'==', museum)
         for m in museum_ref.stream():
             for col in m.to_dict()['collections']:
                 if col['name'] == collection:
                     return col['images']
 
-db = MuseumDB()
-print(db.fetch_images('ATL High Museum', 'Photography'))
+def import_json():
+    db = firestore.Client()
+    data_ref = db.collection(u'mark_data')
+
+    import json
+
+    with open('MUSEUM.json') as f:
+        d = json.load(f)
+        print(d)
+        print(type(d))
+        for doc in d:
+            data_ref.add(doc)
