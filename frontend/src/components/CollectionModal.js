@@ -68,9 +68,6 @@ function CollectionModal(props) {
 
   return (
     <div>
-      <Button color="success" onClick={exitModal}>
-        {"View ATL High"}
-      </Button>
       <Modal isOpen={props.isModalOpen} toggle={exitModal} size="xl">
         <ModalBody>
           <h1>{props.activeMuseum}</h1>
