@@ -4,6 +4,7 @@ const context = canvas.getContext("2d");
 
 let isVideo = false;
 let model = null;
+let loc = "center";
 
 const modelParams = {
   flipHorizontal: true, // flip e.g for video
@@ -18,10 +19,15 @@ function startVideo() {
     if (status) {
       isVideo = true;
       runDetection();
+      //drawBounds();
     } else {
       updateNote.innerText = "Please enable video";
     }
   });
+}
+
+function disable() {
+  isActive = false
 }
 
 function runDetection() {
@@ -34,6 +40,17 @@ function runDetection() {
   });
 }
 
+function drawBounds() {
+  var canvas = document.getElementById('canvas');
+  width = window.innerWidth / 2;
+  height = window.innerHeight;
+  var c = canvas.getContext("2d");
+  c.beginPath();
+  c.rect(0,0,(0.2 * width), height)
+  c.rect((0.8 * width), 0, (0.2 * width), height)
+  c.stroke()
+}
+
 // Load the model.
 handTrack.load(modelParams).then(lmodel => {
   // detect objects in the image.
@@ -43,10 +60,54 @@ handTrack.load(modelParams).then(lmodel => {
 });
 startVideo();
 
-let isCalibrated = false;
+let isActive = false;
 
 let processPredictions = predictions => {
-  if (predictions.length > 0) {
-    console.log("Predictions: ", predictions);
+  drawBounds();
+  var filtered_preds = []
+
+  predictions.forEach(prediction => {
+    if (prediction.score >= 0.75) {
+      filtered_preds.push(prediction)
+    }
+  })
+  //console.log(filtered_preds)
+  if (filtered_preds.length > 0) {
+    w = window.innerWidth / 2;
+    h = window.innerHeight;
+    hand = filtered_preds[0]
+    // Filter out by confidence > 0.70
+    box = hand.bbox
+    x = box[0]
+    y = box[1]
+    width = box[2]
+    height = box[3]
+    cX = x + (width / 2)
+    //maxx = x + width
+    swipeLeft = w * 0.3
+    swipeRight = 0.7 * w
+    //console.log(w, cX)
+    cY = y + (height / 2)
+    confidence = hand["score"]
+    if (loc == "center") {
+      if (cX < swipeLeft) {
+        console.log("You swiped left.")
+        //isActive = true
+        loc = "left"
+        //setTimeout(disable, 5000)
+      } else if (cX > swipeRight) {
+        console.log("You swiped right.")
+        //isActive = true
+        loc = "right"
+        //setTimeout(disable, 5000)
+      }
+      //console.log("Predictions: ", hand, cX, cY);
+    } else { 
+      if (cX > swipeLeft && cX < swipeRight) {
+        loc = "center"
+      }
+    }
   }
 };
+
+
