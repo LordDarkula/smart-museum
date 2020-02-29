@@ -8,6 +8,8 @@ function CollectionModal(props) {
   const [activeCollection, setActiveCollection] = useState("");
   const [activeMuseumCollections, setActiveMuseumCollections] = useState([]);
 
+  const [buttonText, setButtonText] = useState(["View in VR"]);
+
   useEffect(_ => {
     prepModal();
   });
@@ -34,6 +36,32 @@ function CollectionModal(props) {
     setActiveMuseumCollections([]);
     setActiveCollection("");
     props.toggleModal();
+  };
+
+  let startVR = _ => {
+    setButtonText("Loading ...");
+    //TODO: Change this to an API call
+    let url = `http://127.0.0.1:5000/start/${props.activeMuseum}/${activeCollection}`;
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => {
+        console.log(res.status);
+        if (res.status === 200) {
+          // TODO: Have another modal for "View in VR, everything loaded!"
+          // Maybe have a png of someone using a VR headset
+          setButtonText("View in VR");
+          exitModal();
+        } else {
+          setButtonText("Error ...");
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 
   let buildTabs = _ => {
@@ -76,7 +104,9 @@ function CollectionModal(props) {
           <div className="image-container">{renderImages()}</div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">View in VR</Button>{" "}
+          <Button color="primary" onClick={startVR}>
+            {buttonText}
+          </Button>{" "}
           <Button color="secondary" onClick={exitModal}>
             Cancel
           </Button>
