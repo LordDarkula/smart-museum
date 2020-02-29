@@ -1,3 +1,5 @@
+from PIL import Image
+import imagehash
 from os import listdir
 import random
 from os.path import isfile, join
@@ -86,7 +88,10 @@ def update(direction):
 
                     
                     #sim = similarity.calc_similarity_of_images(os.path.join('current', current_name+'.jpg'), os.path.join('images', key+'.jpg'))
-                    sim = random.randint(1, 100)
+                    #sim = random.randint(1, 100)
+                    hash = imagehash.average_hash(Image.open(os.path.join('current', current_name+'.jpg')))
+                    otherhash = imagehash.average_hash(Image.open(os.path.join('images', key+'.jpg')))
+                    sim = abs(hash - otherhash)
                     if direction == 'right':
                         if sim > curr_sim:
                             curr_sim = sim
