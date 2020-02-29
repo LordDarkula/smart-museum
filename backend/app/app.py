@@ -3,6 +3,7 @@ from os.path import isfile, join
 import os
 import shutil
 import json
+#from .image_ops import similarity
 from . import firestore
 from .image_ops import utils
 from flask import Flask
@@ -29,8 +30,8 @@ def all():
 
 @app.route('/image')
 def image():
-    onlyfiles = [f for f in listdir(mypath) if isfile(join('current', f))]
-    return send_file(onlyfiles[0])
+    onlyfiles = [f for f in listdir('current') if isfile(join('current', f))]
+    return send_file(os.path.join(os.path.abspath(os.getcwd()), 'current', onlyfiles[0]))
 
 @app.route('/start/<museum>/<collection>')
 def start(museum, collection):
@@ -68,14 +69,14 @@ def update(direction):
             current_name = f.readline()
             with open('image_data.json', 'r') as f:
                 image_data = json.load(f)
-
+                
+                max_sim = 0
+                max_img = 2
                 for key, val in image_data:
                     if key == current or key in visited:
                         continue
 
                     
-
-            for key, val in image_data:
-
+                    #sim = similarity.calc_similarity_of_images(os.path.join('current', current_name), os.path.join('images', key+'.jpg'))
 
 
