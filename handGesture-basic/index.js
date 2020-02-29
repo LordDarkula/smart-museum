@@ -26,8 +26,8 @@ function startVideo() {
   });
 }
 
-function reset() {
-  loc = "center"
+function disable() {
+  isActive = false
 }
 
 function runDetection() {
@@ -46,7 +46,7 @@ function drawBounds() {
   height = window.innerHeight;
   var c = canvas.getContext("2d");
   c.beginPath();
-  c.rect(0,0,(0.2 * width), height)
+  c.rect(0,0,(0.3 * width), height)
   c.rect((0.8 * width), 0, (0.2 * width), height)
   c.stroke()
 }
@@ -72,6 +72,7 @@ let processPredictions = predictions => {
     }
   })
   //console.log(filtered_preds)
+  
   if (filtered_preds.length > 0) {
     w = window.innerWidth / 2;
     h = window.innerHeight;
@@ -85,7 +86,7 @@ let processPredictions = predictions => {
     cX = x + (width / 2)
     //maxx = x + width
     swipeLeft = w * 0.3
-    swipeRight = 0.7 * w
+    swipeRight = 0.8 * w
     //console.log(w, cX)
     cY = y + (height / 2)
     confidence = hand["score"]
@@ -104,7 +105,7 @@ let processPredictions = predictions => {
       //console.log("Predictions: ", hand, cX, cY);
     } else { 
       if (cX > swipeLeft && cX < swipeRight) {
-        setTimeout(reset, 2000)
+        loc = "center"
       }
     }
   }
