@@ -2,4 +2,5 @@ flask
 pyrebase
 python-dotenv
 google-cloud-firestore
+requests
 
