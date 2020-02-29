@@ -3,7 +3,7 @@ from os.path import isfile, join
 import os
 import shutil
 import json
-#from .image_ops import similarity
+from .image_ops import similarity
 from . import firestore
 from .image_ops import utils
 from flask import Flask
@@ -73,11 +73,38 @@ def update(direction):
             with open('image_data.json', 'r') as f:
                 image_data = json.load(f)
                 
-                max_sim = 0
-                max_img = 2
+                if direction == 'right':
+                    curr_sim = 0
+                    curr_image = 'image1'
+                else:
+                    curr_sim = 100
+                    curr_image = 'image1'
                 for key, val in image_data:
-                    if key == current or key in visited:
+                    if key == current_name or key in visited:
                         continue
 
                     
-                    #sim = similarity.calc_similarity_of_images(os.path.join('current', current_name), os.path.join('images', key+'.jpg'))
+                    sim = similarity.calc_similarity_of_images(os.path.join('current', current_name+'.jpg'), os.path.join('images', key+'.jpg'))
+
+                    if direction == 'right':
+                        if sim > curr_sim:
+                            curr_sim = sim
+                            curr_image = key
+
+                    else:
+                        if sim < curr_sim:
+                            curr_sim = sim
+                            curr_image = key
+
+                
+                if os.path.exists('current'):
+                    shutil.rmtree('current')
+                os.makedirs('current')
+                shutil.copyfile(os.path.join('images', curr_image+'.jpg'),
+                                os.path.join('current', curr_image +'.jpg'))
+                with open('current.txt', 'w') as f:
+                    f.write(curr_image)
+
+                visited[current_name] = image_data[current_name]
+                with open('visited.json', 'w') as f:
+                    json.dump(visited, f)
