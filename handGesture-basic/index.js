@@ -27,7 +27,7 @@ function startVideo() {
 }
 
 function disable() {
-  isActive = false
+  isActive = false;
 }
 
 function runDetection() {
@@ -41,14 +41,14 @@ function runDetection() {
 }
 
 function drawBounds() {
-  var canvas = document.getElementById('canvas');
+  var canvas = document.getElementById("canvas");
   width = window.innerWidth / 2;
   height = window.innerHeight;
   var c = canvas.getContext("2d");
   c.beginPath();
-  c.rect(0,0,(0.25 * width), height)
-  c.rect((0.75 * width), 0, (0.25 * width), height)
-  c.stroke()
+  c.rect(0, 0, 0.25 * width, height);
+  c.rect(0.75 * width, 0, 0.25 * width, height);
+  c.stroke();
 }
 
 // Load the model.
@@ -64,48 +64,78 @@ let isActive = false;
 
 let processPredictions = predictions => {
   drawBounds();
-  var filtered_preds = []
+  var filtered_preds = [];
 
   predictions.forEach(prediction => {
     if (prediction.score >= 0.75) {
-      filtered_preds.push(prediction)
+      filtered_preds.push(prediction);
     }
-  })
+  });
   //console.log(filtered_preds)
-  
+
   if (filtered_preds.length > 0) {
     w = window.innerWidth / 2;
     h = window.innerHeight;
-    hand = filtered_preds[0]
+    hand = filtered_preds[0];
     // Filter out by confidence > 0.70
-    box = hand.bbox
-    x = box[0]
-    y = box[1]
-    width = box[2]
-    height = box[3]
-    cX = x + (width / 2)
+    box = hand.bbox;
+    x = box[0];
+    y = box[1];
+    width = box[2];
+    height = box[3];
+    cX = x + width / 2;
     //maxx = x + width
-    swipeLeft = w * 0.3
-    swipeRight = 0.8 * w
+    swipeLeft = w * 0.3;
+    swipeRight = 0.8 * w;
     //console.log(w, cX)
-    cY = y + (height / 2)
-    confidence = hand["score"]
+    cY = y + height / 2;
+    confidence = hand["score"];
     if (loc == "center") {
       if (cX < swipeLeft) {
-        console.log("You swiped left.")
+        console.log("You swiped left.");
+        fetch("http://127.0.0.1:5000/update/left", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then(res => {
+            return res.json();
+          })
+          .then(res => {
+            console.log(res);
+          })
+          .catch(e => {
+            console.log(e);
+          });
         //isActive = true
-        loc = "left"
+        loc = "left";
         //setTimeout(disable, 5000)
       } else if (cX > swipeRight) {
-        console.log("You swiped right.")
+        console.log("You swiped right.");
+        fetch("http://127.0.0.1:5000/update/right", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then(res => {
+            return res.json();
+          })
+          .then(res => {
+            console.log(res);
+          })
+          .catch(e => {
+            console.log(e);
+          });
         //isActive = true
-        loc = "right"
+        loc = "right";
         //setTimeout(disable, 5000)
       }
       //console.log("Predictions: ", hand, cX, cY);
-    } else { 
+    } else {
       if (cX > swipeLeft && cX < swipeRight) {
-        loc = "center"
+        loc = "center";
       }
     }
   }

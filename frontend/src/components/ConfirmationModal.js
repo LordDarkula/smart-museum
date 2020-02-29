@@ -21,6 +21,17 @@ function ConfirmationModal(props) {
               ? "Place the phone in the Google Cardboard and interact with the gesture detector."
               : "There was an error creating your VR experience. Please check your network connection."}
           </p>
+          <div className="modal-img">
+            <img
+              style={{ width: "50%" }}
+              src={
+                props.success
+                  ? require("../images/mark.png")
+                  : require("../images/sad.png")
+              }
+              alt="emoji"
+            />
+          </div>
           {/* TODO: Throw in an image of VR person PNG */}
         </ModalBody>
         <ModalFooter>
