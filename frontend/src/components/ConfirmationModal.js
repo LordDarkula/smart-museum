@@ -26,7 +26,7 @@ function ConfirmationModal(props) {
               style={{ width: "50%" }}
               src={
                 props.success
-                  ? require("../images/mark.jpg")
+                  ? require("../images/mark.png")
                   : require("../images/sad.png")
               }
               alt="emoji"
