@@ -27,10 +27,12 @@ def all():
     db = firestore.MuseumDB()
     return jsonify(db.fetch_data())
 
+
 @app.route('/image')
 def image():
     onlyfiles = [f for f in listdir(mypath) if isfile(join('current', f))]
     return send_file(onlyfiles[0])
+
 
 @app.route('/start/<museum>/<collection>')
 def start(museum, collection):
@@ -44,38 +46,34 @@ def start(museum, collection):
 
     with open('image_data.json', 'w') as fp:
         json.dump(images, fp)
-    
+
     if os.path.exists('current'):
         shutil.rmtree('current')
     os.makedirs('current')
-    shutil.copyfile(os.path.join('images', 'image1.jpg'), os.path.join('current', 'image1.jpg'))
+    shutil.copyfile(os.path.join('images', 'image1.jpg'),
+                    os.path.join('current', 'image1.jpg'))
     with open('current.txt', 'w') as f:
         f.write('image1')
-    
+
     return "Museum {}, collection {}".format(escape(museum), escape(collection))
 
-@app.route('/update/<direction>')
-def update(direction):
-    if not os.path.exists('visited.json'):
-        with open('visited.json', 'w') as f:
-            json.dump({}, f)
 
+# @app.route('/update/<direction>')
+# def update(direction):
+#     if not os.path.exists('visited.json'):
+#         with open('visited.json', 'w') as f:
+#             json.dump({}, f)
 
-    with open('visited.json', 'r') as f:
-        visited = json.load(f)
-        
-        with open('current.txt') as f:
-            current_name = f.readline()
-            with open('image_data.json', 'r') as f:
-                image_data = json.load(f)
+#     with open('visited.json', 'r') as f:
+#         visited = json.load(f)
 
-                for key, val in image_data:
-                    if key == current or key in visited:
-                        continue
+#         with open('current.txt') as f:
+#             current_name = f.readline()
+#             with open('image_data.json', 'r') as f:
+#                 image_data = json.load(f)
 
-                    
+#                 for key, val in image_data:
+#                     if key == current or key in visited:
+#                         continue
 
-            for key, val in image_data:
-
-
-
+#             for key, val in image_data:

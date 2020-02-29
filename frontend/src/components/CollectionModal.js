@@ -58,8 +58,9 @@ function CollectionModal(props) {
     let imageURLs = [];
     activeMuseumCollections.forEach((c, i) => {
       if (activeCollection === c.name) {
-        c.images.forEach(url => {
-          imageURLs.push(url);
+        let keys = Object.keys(c.images);
+        keys.forEach(key => {
+          imageURLs.push(c.images[key]);
         });
       }
     });
