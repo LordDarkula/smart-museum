@@ -9,6 +9,7 @@ function Map(props) {
   const [activeMuseum, setActiveMuseum] = useState("");
 
   // Centered on Georgia Tech
+  // TODO: Center coordinates around new pins
   const [center] = useState({ lat: 33.776033, lng: -84.39884086 });
   const [zoom] = useState(15);
 

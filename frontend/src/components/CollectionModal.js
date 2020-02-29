@@ -18,6 +18,8 @@ function CollectionModal(props) {
     prepModal();
   });
 
+  //TODO: Do some processsing to remove the dashes from collection AND museum names
+
   let prepModal = _ => {
     console.log("Prepping modal");
     props.data.forEach(m => {
@@ -33,14 +35,15 @@ function CollectionModal(props) {
     });
   };
 
-  let exitModal = confirmation => {
+  let exitModal = confirmed => {
     console.log("Cleaning up modal");
     props.setActiveMuseum("");
     // TODO: Commenting this next line might allow you to cache a collection someone hits twice (tiny improvement in speed lol)
     setActiveMuseumCollections([]);
     setActiveCollection("");
     props.toggleModal();
-    if (confirmation) {
+    if (confirmed) {
+      console.log(confirmed);
       setShowConfirmationModal(true);
     }
   };
@@ -107,7 +110,13 @@ function CollectionModal(props) {
 
   return (
     <div>
-      <Modal isOpen={props.isModalOpen} toggle={exitModal} size="xl">
+      <Modal
+        isOpen={props.isModalOpen}
+        toggle={_ => {
+          exitModal(false);
+        }}
+        size="xl"
+      >
         <ModalBody>
           <h1>{props.activeMuseum}</h1>
           {buildTabs()}
@@ -117,7 +126,12 @@ function CollectionModal(props) {
           <Button color="primary" onClick={startVR}>
             {buttonText}
           </Button>{" "}
-          <Button color="secondary" onClick={exitModal}>
+          <Button
+            color="secondary"
+            onClick={_ => {
+              exitModal(false);
+            }}
+          >
             Cancel
           </Button>
         </ModalFooter>
