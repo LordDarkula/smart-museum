@@ -7,6 +7,7 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 from markupsafe import escape
 from flask import jsonify
+from flask import send_file
 
 
 app = Flask(__name__)
@@ -24,6 +25,9 @@ def all():
     db = firestore.MuseumDB()
     return jsonify(db.fetch_data())
 
+@app.route('/image')
+def image():
+    return send_file('current.jpg')
 
 @app.route('/start/<museum>/<collection>')
 def start(museum, collection):
