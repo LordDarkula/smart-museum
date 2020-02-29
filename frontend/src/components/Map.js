@@ -38,7 +38,14 @@ function Map(props) {
   return (
     <div>
       <div style={{ height: "100vh", width: "100%" }}>
-        <GoogleMapReact defaultCenter={center} defaultZoom={zoom}>
+        <GoogleMapReact
+          defaultCenter={center}
+          defaultZoom={zoom}
+          bootstrapURLKeys={{
+            key: "AIzaSyBJ4VRIYNr-uMXPBN0BAgdeGrkU9SSypRs",
+            language: "en"
+          }}
+        >
           {dropPins()}
         </GoogleMapReact>
       </div>

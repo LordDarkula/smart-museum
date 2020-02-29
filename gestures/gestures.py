@@ -1,9 +1,13 @@
 import cv2
 import imutils
+#import time
+import threading
 import numpy as np
 from sklearn.metrics import pairwise
 
+timer = None
 bg = None
+detected = False
 
 def run_avg(image, aWeight):
     global bg
@@ -28,6 +32,79 @@ def segment(image, threshold=25):
     else:
         segmented = max(cnts, key=cv2.contourArea)
         return (thresholded, segmented)
+
+def thums_up(thresholded, segmented):
+    chull = cv2.convexHull(segmented)
+
+    extreme_top    = tuple(chull[chull[:, :, 1].argmin()][0])
+    extreme_bottom = tuple(chull[chull[:, :, 1].argmax()][0])
+    extreme_left   = tuple(chull[chull[:, :, 0].argmin()][0])
+    extreme_right  = tuple(chull[chull[:, :, 0].argmax()][0])
+    #print(extreme_top, extreme_bottom)
+    #print(extreme_left, extreme_right)
+
+    cX = int((extreme_left[0] + extreme_right[0]) / 2)
+    cY = int((extreme_top[1] + extreme_bottom[1]) / 2)
+
+    distance = pairwise.euclidean_distances([(cX, cY)], Y=[extreme_left, extreme_right, extreme_top, extreme_bottom])[0]
+    maximum_distance = distance[distance.argmax()]
+
+    radius = int(0.8 * maximum_distance)
+    circumference = (2 * np.pi * radius)
+
+    width = abs(int(extreme_right[0] - extreme_left[0]))
+    length = abs(int(extreme_top[1] - extreme_bottom[1]))
+    print(length, width)
+
+    circular_roi = np.zeros(thresholded.shape[:2], dtype="uint8")
+    cv2.circle(circular_roi, (cX, cY), radius, 255, 1)
+
+    # take bit-wise AND between thresholded hand using the circular ROI as the mask
+    # which gives the cuts obtained using mask on the thresholded hand image
+    circular_roi = cv2.bitwise_and(thresholded, thresholded, mask=circular_roi)
+
+    # compute the contours in the circular ROI
+    (cnts, _) = cv2.findContours(circular_roi.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    if (length >= (2 * width)):
+        return 1 
+
+    #distance = pairwise.euclidean_distances([(cX, cY)], Y=[extreme_left, extreme_right, extreme_top, extreme_bottom])[0]
+    #maximum_distance = distance[distance.argmax()]
+
+    #radius = int(0.8 * maximum_distance)
+    #circumference = (2 * np.pi * radius)
+
+    #circular_roi = np.zeros(thresholded.shape[:2], dtype="uint8")
+	
+    # draw the circular ROI
+    #cv2.circle(circular_roi, (cX, cY), radius, 255, 1)
+
+    # take bit-wise AND between thresholded hand using the circular ROI as the mask
+    # which gives the cuts obtained using mask on the thresholded hand image
+    #circular_roi = cv2.bitwise_and(thresholded, thresholded, mask=circular_roi)
+
+    # compute the contours in the circular ROI
+    #(cnts, _) = cv2.findContours(circular_roi.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    # initalize the finger count
+    #count = 0
+
+    # loop through the contours found
+    '''
+    for c in cnts:
+        # compute the bounding box of the contour
+        (x, y, w, h) = cv2.boundingRect(c)
+
+        # increment the count of fingers only if -
+        # 1. The contour region is not the wrist (bottom area)
+        # 2. The number of points along the contour does not exceed
+        #     25% of the circumference of the circular ROI
+        if ((cY + (cY * 0.25)) > (y + h)) and ((circumference * 0.25) > c.shape[0]):
+            count += 1
+    '''
+
+    return 0
 
 def count(thresholded, segmented):
     chull = cv2.convexHull(segmented)
@@ -75,11 +152,20 @@ def count(thresholded, segmented):
 
     return count
 
+def flip():
+    global timer
+    global detected
+    print("I JUST FLIPPED THE SWITCH")
+    timer = None
+    detected = False
+    #print(detected)
+
 if __name__ == "__main__":
     aWeight = 0.5
     camera = cv2.VideoCapture(0)
     top, right, bottom, left = 10, 300, 260, 700
     num_frames = 0
+    print('starting main')
     while(True):
         (grabbed, frame) = camera.read()
         frame = imutils.resize(frame, width=700)
@@ -96,10 +182,26 @@ if __name__ == "__main__":
             if hand is not None:
                 (thresholded, segmented) = hand
                 cv2.drawContours(clone, [segmented + (right, top)], -1, (0, 0, 255), 2)
-                fingers = count(thresholded, segmented)
-                print(fingers)
-                cv2.putText(clone, str(fingers), (100, 70), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0))
+                #fingers = count(thresholded, segmented)
+                #if (fingers < 0):
+                #    fingers = 0
+                #if (fingers > 5):
+                #    fingers = 5
+                #print(fingers)
+                gesture = thums_up(thresholded, segmented)
+                cv2.putText(clone, str(gesture), (100, 70), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0))
                 cv2.imshow("Thresholded", thresholded)
+                if (detected == False and gesture != 0):
+                #if (detected == False and fingers > 1):
+                    detected = True
+                    if (timer == None):
+                        timer = threading.Timer(2.0, flip)
+                        timer.start()
+                        print(detected)
+            detected = False
+            #if (timer != None):
+               # timer.cancel()
+            #print(detected)
         cv2.rectangle(clone, (left, top), (right, bottom), (0, 255, 255), 2)
         num_frames += 1
         cv2.imshow("Smart Museum", clone)
