@@ -46,8 +46,8 @@ function drawBounds() {
   height = window.innerHeight;
   var c = canvas.getContext("2d");
   c.beginPath();
-  c.rect(0,0,(0.3 * width), height)
-  c.rect((0.8 * width), 0, (0.2 * width), height)
+  c.rect(0,0,(0.25 * width), height)
+  c.rect((0.75 * width), 0, (0.25 * width), height)
   c.stroke()
 }
 
