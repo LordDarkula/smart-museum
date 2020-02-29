@@ -1,5 +1,7 @@
 from google.cloud import firestore
 
+DATA = u'mark_data'
+
 class MuseumDB:
 
 
@@ -7,7 +9,7 @@ class MuseumDB:
         self.db = firestore.Client()
 
     def fetch_data(self):
-        data_ref = self.db.collection(u'test_data')
+        data_ref = self.db.collection(DATA)
         return {'test_data': [doc.get().to_dict() for doc in data_ref.list_documents()]}
 
     def fetch_images(self, museum, collection):
@@ -21,7 +23,7 @@ class MuseumDB:
 
 def import_json():
     db = firestore.Client()
-    data_ref = db.collection(u'mark_data')
+    data_ref = db.collection(DATA)
 
     import json
 
