@@ -108,6 +108,10 @@ function CollectionModal(props) {
     return <ImageMasonry imageUrls={imageURLs} numCols={3} scrollable />;
   };
 
+  let processTitle = old => {
+    return old.replace(/-/g, " ");
+  };
+
   return (
     <div>
       <Modal
@@ -118,7 +122,7 @@ function CollectionModal(props) {
         size="xl"
       >
         <ModalBody>
-          <h1>{props.activeMuseum}</h1>
+          <h1>{processTitle(props.activeMuseum)}</h1>
           {buildTabs()}
           <div className="image-container">{renderImages()}</div>
         </ModalBody>
