@@ -48,11 +48,17 @@ def start(museum, collection):
     for key, val in images.items():
         utils.download_image_with_url(val, os.path.join('images', key))
 
+    if os.path.exists('image_data.json'):
+        os.remove('image_data.json')
     with open('image_data.json', 'w') as fp:
         json.dump(images, fp)
 
     if os.path.exists('current'):
         shutil.rmtree('current')
+    if os.path.exists('current.txt'):
+        os.remove('current.txt')
+    if os.path.exists('visited.json'):
+        os.remove('visited.json')
     os.makedirs('current')
     shutil.copyfile(os.path.join('images', 'image1.jpg'),
                     os.path.join('current', 'image1.jpg'))
