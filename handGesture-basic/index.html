@@ -6,17 +6,66 @@
   <title>SmartMuseum </title>
   <link rel="stylesheet" href="https://unpkg.com/carbon-components@latest/css/carbon-components.css" />
   <link rel="stylesheet" href="index.css">
+  <style>
+    #leftbound {
+      background-color: red;
+      border-style: 1px solid red;
+      opacity: 25%;
+      display: block;
+      position: fixed;
+      width: 25%;
+      height: 100%;
+      z-index: 2;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+    }
+    #rightbound {
+      background-color: #00FF00;
+      border-style: 1px solid #00FF00;
+      opacity: 25%;
+      display: block;
+      position: fixed;
+      width: 25%;
+      height: 100%;
+      z-index: 1;
+      cursor: pointer;
+      top: 0;
+      left: 75%;
+    }
+  </style>
 </head>
 
 <body>
-
-  <canvas id="canvas" class="canvasbox">
+  <div class="row">
+    <div id="leftbound">
+        
+    </div>
+    <div id="rightbound">
+      
+    </div>
+  </div>
+  <div>
+    <canvas id="canvas" onload="drawbounds()" class="canvasbox"></canvas>
     <video autoplay="autoplay" id="myvideo"></video>
-  </canvas>
+  </div>
+  
 
   <script src="https://unpkg.com/carbon-components@latest/scripts/carbon-components.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
   <script src="index.js"></script>
+  <script>
+    function drawBounds() {
+      var canvas = document.getElementById('canvas');
+      width = window.innerWidth / 2;
+      height = window.innerHeight;
+      var c = canvas.getContext("2d");
+      c.beginPath();
+      c.rect(0,0,(0.3 * width), height)
+      c.rect((0.8 * width), 0, (0.2 * width), height)
+      c.stroke()
+    }
+  </script>
 </body>
 
 </html>
