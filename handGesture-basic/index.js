@@ -26,8 +26,8 @@ function startVideo() {
   });
 }
 
-function disable() {
-  isActive = false
+function reset() {
+  loc = "center"
 }
 
 function runDetection() {
@@ -104,7 +104,7 @@ let processPredictions = predictions => {
       //console.log("Predictions: ", hand, cX, cY);
     } else { 
       if (cX > swipeLeft && cX < swipeRight) {
-        loc = "center"
+        setTimeout(reset, 2000)
       }
     }
   }
