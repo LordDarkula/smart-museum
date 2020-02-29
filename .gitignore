@@ -29,3 +29,5 @@ secret/
 
 backend/images
 backend/image_data.json
+backend/current/
+backend/current.txt

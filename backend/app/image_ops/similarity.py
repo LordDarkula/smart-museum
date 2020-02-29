@@ -85,7 +85,7 @@ def calc_similarity_of_images(img1_filepath: str, img2_filepath: str) -> float:
 
 	return match
 
-
-path1 = "images/original_golden_bridge.jpg"
-path2 = "images/cartoonized.jpg"
-match_percent = calc_similarity_of_images(path1, path2) 
+#
+#path1 = "images/original_golden_bridge.jpg"
+#path2 = "images/cartoonized.jpg"
+#match_percent = calc_similarity_of_images(path1, path2) 

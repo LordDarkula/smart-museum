@@ -3,12 +3,16 @@ import "../style/App.css";
 
 import ImageMasonry from "react-image-masonry";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
+import ConfirmationModal from "./ConfirmationModal";
 
 function CollectionModal(props) {
   const [activeCollection, setActiveCollection] = useState("");
   const [activeMuseumCollections, setActiveMuseumCollections] = useState([]);
 
   const [buttonText, setButtonText] = useState(["View in VR"]);
+
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isConfirmationSuccess, setIsConfirmationSuccess] = useState(false);
 
   useEffect(_ => {
     prepModal();
@@ -29,13 +33,16 @@ function CollectionModal(props) {
     });
   };
 
-  let exitModal = _ => {
+  let exitModal = confirmation => {
     console.log("Cleaning up modal");
     props.setActiveMuseum("");
     // TODO: Commenting this next line might allow you to cache a collection someone hits twice (tiny improvement in speed lol)
     setActiveMuseumCollections([]);
     setActiveCollection("");
     props.toggleModal();
+    if (confirmation) {
+      setShowConfirmationModal(true);
+    }
   };
 
   let startVR = _ => {
@@ -54,9 +61,12 @@ function CollectionModal(props) {
           // TODO: Have another modal for "View in VR, everything loaded!"
           // Maybe have a png of someone using a VR headset
           setButtonText("View in VR");
-          exitModal();
+          setIsConfirmationSuccess(true);
+          exitModal(true);
         } else {
           setButtonText("Error ...");
+          setIsConfirmationSuccess(false);
+          exitModal(true);
         }
       })
       .catch(e => {
@@ -112,6 +122,13 @@ function CollectionModal(props) {
           </Button>
         </ModalFooter>
       </Modal>
+      {showConfirmationModal ? (
+        isConfirmationSuccess ? (
+          <ConfirmationModal success />
+        ) : (
+          <ConfirmationModal />
+        )
+      ) : null}
     </div>
   );
 }

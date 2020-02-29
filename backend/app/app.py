@@ -1,9 +1,10 @@
 from os import listdir
+import random
 from os.path import isfile, join
 import os
 import shutil
 import json
-from .image_ops import similarity
+#from .image_ops import similarity
 from . import firestore
 from .image_ops import utils
 from flask import Flask
@@ -79,13 +80,13 @@ def update(direction):
                 else:
                     curr_sim = 100
                     curr_image = 'image1'
-                for key, val in image_data:
+                for key, val in image_data.items():
                     if key == current_name or key in visited:
                         continue
 
                     
-                    sim = similarity.calc_similarity_of_images(os.path.join('current', current_name+'.jpg'), os.path.join('images', key+'.jpg'))
-
+                    #sim = similarity.calc_similarity_of_images(os.path.join('current', current_name+'.jpg'), os.path.join('images', key+'.jpg'))
+                    sim = random.randint(1, 100)
                     if direction == 'right':
                         if sim > curr_sim:
                             curr_sim = sim
@@ -96,8 +97,9 @@ def update(direction):
                             curr_sim = sim
                             curr_image = key
 
-                
+
                 if os.path.exists('current'):
+                    print("removing")
                     shutil.rmtree('current')
                 os.makedirs('current')
                 shutil.copyfile(os.path.join('images', curr_image+'.jpg'),
@@ -108,3 +110,4 @@ def update(direction):
                 visited[current_name] = image_data[current_name]
                 with open('visited.json', 'w') as f:
                     json.dump(visited, f)
+        return '', 200 
