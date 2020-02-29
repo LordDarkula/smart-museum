@@ -99,6 +99,7 @@ def update(direction):
 
 
                 if os.path.exists('current'):
+                    print("removing")
                     shutil.rmtree('current')
                 os.makedirs('current')
                 shutil.copyfile(os.path.join('images', curr_image+'.jpg'),
