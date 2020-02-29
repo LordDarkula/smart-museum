@@ -72,7 +72,48 @@ let processPredictions = predictions => {
     }
   })
   //console.log(filtered_preds)
-  if (filtered_preds.length > 0) {
+  if (filtered_preds.length > 1) {
+    w = window.innerWidth / 2;
+    h = window.innerHeight;
+    hand1 = filtered_preds[0]
+    hand2 = filtered_preds[1]
+
+    box1 = hand1.bbox
+    box2 = hand2.bbox
+    x1 = box1[0]
+    y1 = box1[1]
+    width1 = box1[2]
+    height1 = box1[3]
+    x2 = box2[0]
+    y2 = box2[1]
+    width2 = box2[2]
+    height1 = box1[3]
+    cX = x + (width / 2)
+    //maxx = x + width
+    swipeLeft = w * 0.3
+    swipeRight = 0.7 * w
+    //console.log(w, cX)
+    cY = y + (height / 2)
+    confidence = hand["score"]
+    if (loc == "center") {
+      if (cX < swipeLeft) {
+        console.log("You swiped left.")
+        //isActive = true
+        loc = "left"
+        //setTimeout(disable, 5000)
+      } else if (cX > swipeRight) {
+        console.log("You swiped right.")
+        //isActive = true
+        loc = "right"
+        //setTimeout(disable, 5000)
+      }
+      //console.log("Predictions: ", hand, cX, cY);
+    } else { 
+      if (cX > swipeLeft && cX < swipeRight) {
+        loc = "center"
+      }
+    }
+  } else if (filtered_preds.length > 0) {
     w = window.innerWidth / 2;
     h = window.innerHeight;
     hand = filtered_preds[0]
