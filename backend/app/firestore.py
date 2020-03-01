@@ -2,8 +2,8 @@ from google.cloud import firestore
 
 DATA = u'mark_data'
 
-class MuseumDB:
 
+class MuseumDB:
 
     def __init__(self):
         self.db = firestore.Client()
@@ -15,11 +15,13 @@ class MuseumDB:
     def fetch_images(self, museum, collection):
         print("Museum is " + museum)
         print("Collection is " + collection)
-        museum_ref = self.db.collection(u'mark_data').where(u'name', u'==', museum)
+        museum_ref = self.db.collection(
+            u'mark_data').where(u'name', u'==', museum)
         for m in museum_ref.stream():
             for col in m.to_dict()['collections']:
                 if col['name'] == collection:
                     return col['images']
+
 
 def import_json():
     db = firestore.Client()

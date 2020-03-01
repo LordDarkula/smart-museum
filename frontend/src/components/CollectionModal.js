@@ -88,7 +88,7 @@ function CollectionModal(props) {
           }}
           className={c.name === activeCollection ? "activeTab" : "tab"}
         >
-          {c.name}{" "}
+          {processTitle(c.name)}{" "}
         </span>
       );
     });

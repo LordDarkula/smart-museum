@@ -1,5 +1,9 @@
+.tab {
+  padding: 0 1%;
+}
 .activeTab {
   text-decoration: underline;
+  padding: 0 1%;
 }
 
 .image-container {
